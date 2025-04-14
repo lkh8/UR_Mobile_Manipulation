@@ -1,0 +1,71 @@
+<mujoco model="base">
+  <compiler angle="radian"/>
+
+  <option integrator="implicitfast"/>
+
+  <default>
+    <default class="visual">
+      <geom type="mesh" contype="0" conaffinity="0" group="1"/>
+    </default>
+    <default class="collision">
+      <geom type="mesh" group="0"/>
+    </default>
+  </default>
+
+  <asset>
+    <material name="black" rgba="0.11372549 0.11372549 0.10196078 1"/>
+    <material name="gray" rgba="0.62745098 0.65098039 0.64705882 1"/>
+    <material name="dark_gray" rgba="0.35294118 0.37647059 0.37254902 1"/>
+    <mesh name="bumper" file="assets/base/bumper.stl"/>
+    <mesh name="bottom_plate" file="assets/base/bottom_plate.stl"/>
+    <mesh name="body" file="assets/base/body.stl"/>
+    <mesh name="top_plate" file="assets/base/top_plate.stl"/>
+    <mesh name="arm_plate" file="assets/base/arm_plate.stl"/>
+    <material name="Shell005_001_001_002_001" specular="0.5" shininess="0.45" rgba="1.000000 1.000000 1.000000 1.000000"/>
+  </asset>
+
+  <worldbody>
+    <body name="base_link">
+      <inertial pos="0 0 0.035" mass="60" diaginertia="0.001 0.001 0.001"/>
+   
+      <body name="fixed_support" pos="0 0 0.335">
+				<geom type="cylinder" pos="0 0 0" size="0.12 0.1 0" group="0" material="Shell005_001_001_002_001"/>
+        <geom name="fixed_support" type="cylinder" pos="0 0 0" size="0.12 0.1 0" group="1" material="Shell005_001_001_002_001"/>
+        <body name="support" pos="0 0 0.10">
+          <site name="center" type="sphere" pos="0 0 0" size="0.01" group="1" rgba="0 0 0 0"/>
+        <!-- <joint name="joint_torso_height" pos="0 0 0" axis="0 0 1" type="slide" limited="true" range="0 0.25" damping="0.01" armature="0.0" frictionloss="1000" ref="0"/> -->
+				<!-- <geom type="cylinder" pos="0 0.0 -0.185" size="0.1125 0.2 0" group="0" material="Shell005_001_001_002_001"/>
+        <geom name="support" type="cylinder" pos="0 0 -0.185" size="0.1125 0.2 0" group="1" material="Shell005_001_001_002_001"/> -->
+        </body>
+      </body>
+
+      <body name="wheeled_base" pos="0 0 0">
+        <geom name="bump_vis" class="visual" mesh="bumper" material="black"/>
+        <geom name="bottom_plate_vis" class="visual" mesh="bottom_plate" material="dark_gray"/>
+        <geom name="body_vis" class="visual" mesh="body" material="gray"/>
+        <geom name="top_plate_vis" class="visual" mesh="top_plate" material="dark_gray"/>
+        <geom name="arm_plate_vis" class="visual" mesh="arm_plate" material="gray"/>
+        <geom name="bumper_c" class="collision" mesh="bumper"/>
+        <geom name="bottom_plate_c" class="collision" mesh="bottom_plate"/>
+        <geom name="body_c" class="collision" mesh="body"/>
+        <geom name="top_plate_c" class="collision" mesh="top_plate"/>
+        <geom name="arm_plate_c" class="collision" mesh="arm_plate"/>
+      </body>
+      <joint name="joint_forward" type="slide" axis="0 1 0" frictionloss="250"/>
+      <joint name="joint_side" type="slide" axis="1 0 0" frictionloss="250"/>
+      <joint name="joint_yaw" type="hinge" axis="0 0 1" frictionloss="250"/>
+    </body>
+  </worldbody>
+
+  <!-- <actuator>
+    <position name="joint_x" joint="joint_x" kp="1000000" kv="50000"/>
+    <position name="joint_y" joint="joint_y" kp="1000000" kv="50000"/>
+    <position name="joint_th" joint="joint_th" kp="50000" kv="1000"/>
+  </actuator> -->
+  <actuator>
+    <velocity ctrllimited="true" ctrlrange="-1.00 1.00" joint="joint_forward" kv="1000" name="actuator_f" forcelimited="true" forcerange="-600 600"/>
+		<velocity ctrllimited="true" ctrlrange="-1.00 1.00" joint="joint_side" kv="1000" name="actuator_s" forcelimited="true" forcerange="-600 600"/>
+		<velocity ctrllimited="true" ctrlrange="-1.50 1.50" joint="joint_yaw" kv="1500" name="actuator_y" forcelimited="true" forcerange="-600 600"/>
+	  <!-- <motor ctrllimited="true" ctrlrange="-100000.0 100000.0" joint="joint_torso_height" name="actuator_torso_height" forcelimited="false"/> -->
+  </actuator>
+</mujoco>
